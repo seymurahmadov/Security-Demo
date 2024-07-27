@@ -16,14 +16,11 @@ import java.util.Objects;
 
 @RestController
 @CrossOrigin
-@RequiredArgsConstructor
 public class JwtAuthenticationController {
 
-	@Autowired
-	private AuthenticationManager authenticationManager;
+	private final AuthenticationManager authenticationManager;
 
-	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
+	private final JwtTokenUtil jwtTokenUtil;
 
 	private final UserDetailsService jwtInMemoryUserDetailsService;
 
@@ -31,7 +28,15 @@ public class JwtAuthenticationController {
 
 	private final UserRepo userRepo;
 
-	@PostMapping("/signing")
+    public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService jwtInMemoryUserDetailsService, PasswordEncoder passwordEncoder, UserRepo userRepo) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
+        this.passwordEncoder = passwordEncoder;
+        this.userRepo = userRepo;
+    }
+
+    @PostMapping("/signing")
 	public String  signIn(@RequestBody JwtRequest request)
 			throws Exception {
 

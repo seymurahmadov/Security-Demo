@@ -6,7 +6,6 @@ import com.ltc.securitydemo.dto.telegramDto.TelegramRoot;
 import com.ltc.securitydemo.dto.telegramDto.TelegramSendDto;
 import com.ltc.securitydemo.entity.CarEntity;
 import com.ltc.securitydemo.repository.CarRepository;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

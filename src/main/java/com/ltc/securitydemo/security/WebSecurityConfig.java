@@ -39,25 +39,38 @@ public class WebSecurityConfig  {
 			"/swagger-ui.html"
 	};
 
-	@Autowired
-	private UserDetailsService userDetailsService;
 
-	@Autowired
-	private JwtRequestFilter jwtAuthFilter;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-	@Bean
+	private final UserDetailsService userDetailsService;
+
+
+	private final JwtRequestFilter jwtAuthFilter;
+
+    public WebSecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, UserDetailsService userDetailsService, JwtRequestFilter jwtAuthFilter) {
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.userDetailsService = userDetailsService;
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
+
+
+
+    @Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
 				.csrf(CsrfConfigurer::disable)
-				.authorizeHttpRequests(
-						authorizeHttp -> {
-							authorizeHttp.requestMatchers("/api/admin").hasAuthority("ADMIN");
-							authorizeHttp.requestMatchers("/api/auth/admin/**").hasAuthority("ADMIN");
-							authorizeHttp.requestMatchers("/api/user").hasAuthority("USER");
-							authorizeHttp.requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui/**","/swagger-ui.html").permitAll();
-							authorizeHttp.requestMatchers("/signing","/signup").permitAll();
-						}
-				).build();
+				.authorizeHttpRequests(authorizeHttp -> {
+					authorizeHttp.requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui/**","/swagger-ui.html").permitAll();
+					authorizeHttp.requestMatchers("/signing", "/signup").permitAll();
+					authorizeHttp.requestMatchers("/api/admin").hasAuthority("ADMIN");
+					authorizeHttp.requestMatchers("/api/auth/admin/**").hasAuthority("ADMIN");
+					authorizeHttp.requestMatchers("/api/user").hasAuthority("USER");
+					authorizeHttp.anyRequest().authenticated();
+				})
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+				.build();
 	}
 
 	@Bean
@@ -75,7 +88,9 @@ public class WebSecurityConfig  {
 		return (web) -> web.ignoring().requestMatchers(new AntPathRequestMatcher("/h2-console/**"));
 	}
 
-	private AuthenticationProvider authenticationProvider() {
+
+	@Bean
+	public AuthenticationProvider authenticationProvider() {
 		final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 		authenticationProvider.setUserDetailsService(userDetailsService);
 		authenticationProvider.setPasswordEncoder(passwordEncoder());
