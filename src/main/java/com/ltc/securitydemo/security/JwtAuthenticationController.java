@@ -69,7 +69,6 @@ public class JwtAuthenticationController {
 			return ResponseEntity.ok("You signed!");
 		}else
 			return ResponseEntity.ok("This account already exist in our DB!");
-
 	}
 
 
