@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -28,12 +29,15 @@ public class JwtAuthenticationController {
 
 	private final UserRepo userRepo;
 
-    public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService jwtInMemoryUserDetailsService, PasswordEncoder passwordEncoder, UserRepo userRepo) {
+	private final UserService userService;
+
+    public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService jwtInMemoryUserDetailsService, PasswordEncoder passwordEncoder, UserRepo userRepo, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.userRepo = userRepo;
+        this.userService = userService;
     }
 
     @PostMapping("/signing")
@@ -49,7 +53,7 @@ public class JwtAuthenticationController {
 				.token(token)
 				.email(request.getEmail())
 				.password(request.getPassword())
-				.role(request.getRole())
+				.role(request.getRole().name())
 				.build();
 
 		return  signInResponseDto.toString();
@@ -85,4 +89,20 @@ public class JwtAuthenticationController {
 			throw new Exception("INVALID_CREDENTIALS", e);
 		}
 	}
+
+
+	@PutMapping("/update{id}")
+	public String update(@RequestBody JwtRequest request, @PathVariable Long id){
+		return userService.update(id, request);
+	}
+
+
+
+	@GetMapping("/get-all")
+	public List<JwtRequest> getAll(){
+		return userService.getAll();
+	}
+
+
+
 }

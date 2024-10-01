@@ -3,6 +3,8 @@ package com.ltc.securitydemo.controller;
 import com.ltc.securitydemo.dto.request.CarRequestDto;
 import com.ltc.securitydemo.dto.response.CarResponseDto;
 import com.ltc.securitydemo.service.CarService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +36,6 @@ public class CarController {
     public CarResponseDto findById(@PathVariable Long id) {
         CarResponseDto byId = carService.findById(id);
         return byId;
-
     }
 
     @PostMapping("/create")
@@ -44,10 +45,9 @@ public class CarController {
     }
 
     @DeleteMapping("/delete")
-    public String delete(@RequestParam Long id) {
+    public ResponseEntity<String> delete(@RequestParam Long id) {
         carService.delete(id);
-        return "Success";
-
+        return new ResponseEntity<>("Car deleted successfully", HttpStatus.OK);
     }
 
 

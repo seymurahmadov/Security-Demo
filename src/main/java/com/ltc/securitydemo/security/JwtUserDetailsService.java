@@ -23,7 +23,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
         if (user != null) {
             List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority(user.getRole())); // Add the role as authority
+            authorities.add(new SimpleGrantedAuthority(user.getRole().name())); // Add the role as authority
 
             return new User(user.getEmail(), user.getPassword(), authorities);
         } else {

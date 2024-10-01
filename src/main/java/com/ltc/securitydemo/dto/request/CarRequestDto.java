@@ -10,7 +10,8 @@ public class CarRequestDto {
 
     private String carName;
     private Integer carYear;
-    private Long ownerId;
+//    private Long ownerId;
+    private Long userId;
 
 
 }

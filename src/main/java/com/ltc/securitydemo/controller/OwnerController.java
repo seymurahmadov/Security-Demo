@@ -3,6 +3,7 @@ package com.ltc.securitydemo.controller;
 import com.ltc.securitydemo.dto.request.OwnerRequestDto;
 import com.ltc.securitydemo.dto.response.OwnerResponseDto;
 import com.ltc.securitydemo.service.OwnerService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,10 +18,10 @@ public class OwnerController {
     }
 
     @GetMapping("/getAll")
+//    @PreAuthorize("hasRole('USER')")
     public List<OwnerResponseDto> getAll() {
         return ownerService.getAll();
     }
-
 
 
     @PostMapping("/create")

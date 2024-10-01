@@ -1,6 +1,7 @@
 package com.ltc.securitydemo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ltc.securitydemo.security.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,5 +40,11 @@ public class CarEntity {
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
     private List<WheelEntity> wheelEntityList;
+
+
+    @ManyToOne
+    @JoinColumn(name= "user_id")
+    @JsonIgnore
+    private UserEntity userEntity;
 
 }
