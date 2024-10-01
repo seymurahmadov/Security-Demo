@@ -63,26 +63,19 @@ public class UserService {
         if ((authentication != null && authentication.getName().equals(userEntity.getEmail())) || isAdmin) {
             System.out.println("User: " + authentication.getName());
 
-            // Eğer email değiştiriliyorsa
             boolean isUsernameChanged = !request.getEmail().equals(userEntity.getEmail());
 
-            // Kullanıcıyı güncelle
             modelMapper.map(request, userEntity);
             userRepo.save(userEntity);
 
-            // Eğer username değiştiyse yeni token üret
             if (isUsernameChanged) {
-                // Yeni username ile UserDetails yükle
                 UserDetails userDetails = jwtInMemoryUserDetailsService.loadUserByUsername(userEntity.getEmail());
 
-                // Yeni JWT token üret
                 final String newToken = jwtTokenUtil.generateToken(userDetails);
 
-                // Yeni token'ı döndür
                 return "User updated successfully. New token: " + newToken;
             }
 
-            // Eğer email değişmediyse sadece kullanıcıyı güncelle
             return "User updated successfully";
         } else {
             throw new AccessDeniedException("You do not have permission to update this user.");
